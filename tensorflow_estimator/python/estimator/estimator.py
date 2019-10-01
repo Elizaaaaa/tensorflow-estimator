@@ -866,7 +866,7 @@ class Estimator(object):
 
       # Add the extra assets
       if assets_extra:
-        assets_extra_path = os.path.join(compat.as_bytes(temp_export_dir),
+        assets_extra_path = os.path.join(compat.as_bytes(current_export_dir),
                                          compat.as_bytes('assets.extra'))
         for dest_relative, source in assets_extra.items():
           dest_absolute = os.path.join(compat.as_bytes(assets_extra_path),
@@ -875,8 +875,10 @@ class Estimator(object):
           gfile.MakeDirs(dest_path)
           gfile.Copy(source, dest_absolute)
 
-      gfile.Rename(temp_export_dir, export_dir)
-      return export_dir
+      if gfile.NeedsTempLocation(final_export_dir):
+      gfile.Rename(current_export_dir, final_export_dir)
+      
+      return final_export_dir
 
   def _add_meta_graph_for_mode(self,
                                builder,
